@@ -2,16 +2,15 @@ package utils
 
 import (
 	"fmt"
-	"sync"
 
 	ffmpeg_go "github.com/u2takey/ffmpeg-go"
 )
 
-func ResizeImage(inputPath string, output string, pixels string, wg *sync.WaitGroup) error {
-	// Redimensionar a 48px
-	defer wg.Done()
-	err := ffmpeg_go.Input(inputPath).Filter("scale", ffmpeg_go.Args{fmt.Sprintf("%s:-1", pixels)}).
-		Output(fmt.Sprintf("%s_%spx.jpeg", output, pixels)).OverWriteOutput().ErrorToStdOut().Run()
+func ResizeImage(fileId string, extension string, pixels string) error {
+
+	err := ffmpeg_go.Input(fmt.Sprintf("./tmp/%s/main.%s", fileId, extension)).Filter("scale", ffmpeg_go.Args{fmt.Sprintf("%s:-1", pixels)}).
+		Output(fmt.Sprintf("./tmp/%s/%s.%s", fileId, pixels, extension)).OverWriteOutput().ErrorToStdOut().Run()
+
 	if err != nil {
 		return err
 	}

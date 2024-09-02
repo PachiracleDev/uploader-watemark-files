@@ -35,13 +35,17 @@ func UploadPostUsecase(fileUUID string, extension string, privacy string, awsSdk
 	}
 
 	//UPLOAD TO S3
-	awsSdk.Upload(implements.UploadToS3{
-		FileDir:     fmt.Sprintf("./tmp/%s/watemark.%s", fileUUID, extension),
+	err := awsSdk.Upload(implements.UploadToS3{
+		FileDir:     fmt.Sprintf("./tmp/%s/watermark.%s", fileUUID, extension),
 		ContentType: fmt.Sprintf("%s/%s", fileType, extension),
 		Bucket:      bucket,
 		FileKey:     fileUUID,
 		Folder:      constants.POST_FOLDER,
 	})
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

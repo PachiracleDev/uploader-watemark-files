@@ -29,7 +29,6 @@ type ServerConfig struct {
 }
 
 type AWSConfig struct {
-	S3Bucket        string
 	Region          string
 	AccessKeyId     string
 	SecretAccessKey string
@@ -59,7 +58,7 @@ func NewConfig() *Config {
 		},
 
 		AWS: AWSConfig{
-			S3Bucket:        os.Getenv("AWS_S3_BUCKET"),
+
 			Region:          os.Getenv("AWS_REGION"),
 			AccessKeyId:     os.Getenv("AWS_ACCESS_KEY_ID"),
 			SecretAccessKey: os.Getenv("AWS_SECRET_ACCESS_KEY"),

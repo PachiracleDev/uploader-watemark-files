@@ -50,7 +50,8 @@ func UploadController(
 		usecases.UploadAvatar(result.FileUUID, result.Extension, awsSdk)
 
 		//ELIMINAR CARPETA
-		go os.RemoveAll(result.Dir)
+		fmt.Println(result.Dir, "result.Dir")
+		go os.Remove(result.Dir)
 
 		return c.JSON(map[string]interface{}{
 			"fileKey": result.FileUUID,
@@ -86,10 +87,17 @@ func UploadController(
 		}
 
 		//USECASE
-		usecases.UploadPostUsecase(result.FileUUID, result.Extension, uploadFileDto.Privacy, awsSdk)
+		err := usecases.UploadPostUsecase(result.FileUUID, result.Extension, uploadFileDto.Privacy, awsSdk)
 
 		//ELIMINAR CARPETA
 		go os.RemoveAll(result.Dir)
+
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(
+				map[string]interface{}{
+					"message": err.Error(),
+				})
+		}
 
 		return c.JSON(map[string]interface{}{
 			"fileKey": result.FileUUID,
@@ -124,9 +132,49 @@ func UploadController(
 		}
 
 		//USECASE
-		usecases.UploadFileChatUsecase(result.FileUUID, result.Extension, uploadFileDto.Privacy, awsSdk)
+		err := usecases.UploadFileChatUsecase(result.FileUUID, result.Extension, uploadFileDto.Privacy, awsSdk)
 
 		go os.RemoveAll(result.Dir)
+
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(
+				map[string]interface{}{
+					"message": err.Error(),
+				})
+		}
+
+		return c.JSON(map[string]interface{}{
+			"fileKey": result.FileUUID,
+		})
+
+	})
+
+	api.Post("/vouchers", func(c *fiber.Ctx) error {
+
+		result := utils.GetFile(
+			c,
+			constants.LIMIT_VOUCHER_SIZE,
+			[]string{"jpeg", "jpg", "png", "pdf"},
+		)
+
+		if result.Error != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(
+				map[string]interface{}{
+					"message": result.Error.Error(),
+				})
+		}
+
+		//USECASE
+		err := usecases.UploadVouchersUsecase(result.FileUUID, result.Extension, awsSdk)
+
+		go os.RemoveAll(result.Dir)
+
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(
+				map[string]interface{}{
+					"message": err.Error(),
+				})
+		}
 
 		return c.JSON(map[string]interface{}{
 			"fileKey": result.FileUUID,

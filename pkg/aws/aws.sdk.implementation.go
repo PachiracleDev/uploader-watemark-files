@@ -16,7 +16,8 @@ type AwsSdkImplementation struct {
 }
 
 func NewSDKImplementation(conf *appConfig.Config) (*AwsSdkImplementation, error) {
-	cfg, err := config.LoadDefaultConfig(context.Background(), config.WithRegion("us-east-1"))
+
+	cfg, err := config.LoadDefaultConfig(context.Background(), config.WithRegion(conf.AWS.Region))
 
 	if err != nil {
 		return &AwsSdkImplementation{}, fmt.Errorf("error creating AWS session: %w", err)
@@ -39,6 +40,7 @@ func (u *AwsSdkImplementation) Upload(dto UploadToS3) error {
 
 	file, err := os.Open(dto.FileDir)
 	if err != nil {
+		fmt.Println("Error opening file", err)
 		return err
 	}
 	defer file.Close()
@@ -52,6 +54,7 @@ func (u *AwsSdkImplementation) Upload(dto UploadToS3) error {
 
 	_, err = u.s3Client.PutObject(context.Background(), input)
 	if err != nil {
+		fmt.Println("Error uploading file to S3", err)
 		return err
 	}
 

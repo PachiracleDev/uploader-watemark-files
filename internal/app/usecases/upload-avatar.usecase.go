@@ -19,23 +19,27 @@ func UploadAvatar(fileId string, extension string, awsSdk *implements.AwsSdkImpl
 	}
 
 	var wg sync.WaitGroup
-	wg.Add(len(sizes) * 2)
+
+	wg.Add(len(sizes))
 
 	// Resize image
 	for _, pixels := range sizes {
-		go func(pixels int) {
+		go func(pixel int) {
 			defer wg.Done()
-			utils.ResizeImage(fileId, extension, fmt.Sprintf("%d", pixels))
+			utils.ResizeImage(fileId, extension, pixel)
 		}(pixels)
 	}
+	wg.Wait()
 
-	// Subir a S3
+	var wg2 sync.WaitGroup
+
+	wg2.Add(len(sizes))
 
 	for size, pixels := range sizes {
 		go func(pixel int, size string) {
-			defer wg.Done()
+			defer wg2.Done()
 			awsSdk.Upload(implements.UploadToS3{
-				FileDir:     fmt.Sprintf("./tmp/%s/%d.%s", fileId, pixel, extension),
+				FileDir:     fmt.Sprintf("./tmp/%s/resize_%d.%s", fileId, pixel, extension),
 				ContentType: fmt.Sprintf("image/%s", extension),
 				Bucket:      os.Getenv("AWS_BUCKET_PUBLIC"),
 				FileKey:     fmt.Sprintf("%s_%s", fileId, size),
@@ -44,7 +48,7 @@ func UploadAvatar(fileId string, extension string, awsSdk *implements.AwsSdkImpl
 		}(pixels, size)
 	}
 
-	wg.Wait()
+	wg2.Wait()
 
 	return nil
 }

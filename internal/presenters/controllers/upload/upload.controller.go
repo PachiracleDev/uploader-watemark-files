@@ -12,9 +12,9 @@ import (
 	"uploader/pkg/http"
 	"uploader/pkg/validator"
 
-	"github.com/gofiber/fiber/v2"
-
 	implements "uploader/pkg/aws"
+
+	"github.com/gofiber/fiber/v2"
 	//UTILS
 )
 
@@ -30,6 +30,8 @@ func UploadController(
 	api := http.Group("/upload")
 
 	// api.Use(http.AuthMiddleware())
+
+	http.BasicAuthMiddleware()
 
 	api.Post("/avatar", func(c *fiber.Ctx) error {
 
@@ -50,7 +52,6 @@ func UploadController(
 		usecases.UploadAvatar(result.FileUUID, result.Extension, awsSdk)
 
 		//ELIMINAR CARPETA
-		fmt.Println(result.Dir, "result.Dir")
 		go os.Remove(result.Dir)
 
 		return c.JSON(map[string]interface{}{

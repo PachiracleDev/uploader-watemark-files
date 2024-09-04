@@ -2,9 +2,11 @@ package http
 
 import (
 	"fmt"
+	"os"
 	"uploader/config"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/basicauth"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
@@ -43,4 +45,14 @@ func (u *HttpServer) Group(path string) fiber.Router {
 
 func (u *HttpServer) App() *fiber.App {
 	return u.app
+}
+
+func (u *HttpServer) BasicAuthMiddleware() {
+	// Provide a minimal config
+	u.app.Use(basicauth.New(basicauth.Config{
+		Users: map[string]string{
+			os.Getenv("AUTH_USERNAME"): os.Getenv("AUTH_PASSWORD"),
+		},
+	}))
+
 }

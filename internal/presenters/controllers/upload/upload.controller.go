@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"os"
 	"uploader/config"
 	"uploader/internal/app/usecases"
@@ -52,7 +51,41 @@ func UploadController(
 		usecases.UploadAvatar(result.FileUUID, result.Extension, awsSdk)
 
 		//ELIMINAR CARPETA
-		go os.Remove(result.Dir)
+		go os.RemoveAll(result.Dir)
+
+		return c.JSON(map[string]interface{}{
+			"fileKey": result.FileUUID,
+		})
+
+	})
+
+	api.Post("/banner", func(c *fiber.Ctx) error {
+
+		result := utils.GetFile(
+			c,
+			constants.LIMIT_BANNER_SIZE,
+			[]string{"jpeg", "jpg", "png"},
+		)
+
+		if result.Error != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(
+				map[string]interface{}{
+					"message": result.Error.Error(),
+				})
+		}
+
+		//USECASE
+		err := usecases.UploadBanner(result.FileUUID, result.Extension, awsSdk)
+
+		//ELIMINAR CARPETA
+		go os.RemoveAll(result.Dir)
+
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(
+				map[string]interface{}{
+					"message": "El ancho como minimo debe ser de 1000px y el alto de 200px",
+				})
+		}
 
 		return c.JSON(map[string]interface{}{
 			"fileKey": result.FileUUID,
@@ -62,7 +95,6 @@ func UploadController(
 
 	api.Post("/post", func(c *fiber.Ctx) error {
 
-		fmt.Println("xd")
 		// QUERY PARAMS PARSE
 		uploadFileDto := new(dtos.UploadFile)
 		if err := c.QueryParser(uploadFileDto); err != nil {

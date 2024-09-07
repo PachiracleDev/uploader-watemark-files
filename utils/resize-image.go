@@ -18,3 +18,18 @@ func ResizeImage(fileId string, extension string, pixels int) error {
 
 	return nil
 }
+
+func CrobImage(fileId string, extension string, width int, height int) error {
+
+	err := ffmpeg_go.Input(fmt.Sprintf("./tmp/%s/main.%s", fileId, extension)).
+		Filter("crop", ffmpeg_go.Args{fmt.Sprintf("%d:%d", width, height)}). // Recortar la imagen
+		Output(fmt.Sprintf("./tmp/%s/crop_%d_%d.%s", fileId, width, height, extension)).
+		OverWriteOutput().ErrorToStdOut().Run()
+
+	if err != nil {
+		fmt.Println(err, "Error cropping image")
+		return err
+	}
+
+	return nil
+}

@@ -72,7 +72,7 @@ func GetFile(c *fiber.Ctx,
 	return ResponseFile{
 		FileUUID:  fileUUID,
 		Extension: extension,
-		Dir:       fileDir,
+		Dir:       dir,
 		Error:     nil,
 	}
 }

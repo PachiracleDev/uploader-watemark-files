@@ -120,7 +120,7 @@ func UploadController(
 		}
 
 		//USECASE
-		err := usecases.UploadPostUsecase(result.FileUUID, result.Extension, uploadFileDto.Privacy, awsSdk)
+		err := usecases.UploadPostUsecase(result.FileUUID, result.Extension, uploadFileDto.Privacy, uploadFileDto.Username, awsSdk)
 
 		//ELIMINAR CARPETA
 		go os.RemoveAll(result.Dir)

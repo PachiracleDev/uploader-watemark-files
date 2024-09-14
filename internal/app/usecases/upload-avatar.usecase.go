@@ -14,8 +14,8 @@ import (
 func UploadAvatar(fileId string, extension string, awsSdk *implements.AwsSdkImplementation) error {
 
 	sizes := map[string]int{
-		"sm": 48,
-		"md": 200,
+		"sm": 54,
+		"md": 250,
 	}
 
 	var wg sync.WaitGroup

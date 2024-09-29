@@ -138,6 +138,42 @@ func UploadController(
 
 	})
 
+	api.Post("/collection", func(c *fiber.Ctx) error {
+
+		// QUERY PARAMS PARSE
+		uploadFileDto := new(dtos.UploadCollectionFile)
+		if err := c.QueryParser(uploadFileDto); err != nil {
+			return err
+		}
+
+		// Validation
+		if errs := validate.Validate(uploadFileDto); errs != nil {
+			return errs
+		}
+
+		result := utils.GetFile(
+			c,
+			constants.LIMIT_POST_SIZE,
+			[]string{"jpeg", "jpg", "png", "mp4"},
+		)
+
+		if result.Error != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(
+				map[string]interface{}{
+					"message": result.Error.Error(),
+				})
+		}
+
+		//USECASE
+		go usecases.UploadCollectionFileUsecase(*uploadFileDto, result.FileUUID, result.Extension, awsSdk)
+
+		return c.JSON(map[string]interface{}{
+			"success": true,
+			"fileKey": result.FileUUID,
+		})
+
+	})
+
 	api.Post("/chat", func(c *fiber.Ctx) error {
 
 		// QUERY PARAMS PARSE

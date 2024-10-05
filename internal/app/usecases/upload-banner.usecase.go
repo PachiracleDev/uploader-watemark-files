@@ -12,14 +12,14 @@ import (
 
 func UploadBanner(fileId string, extension string, awsSdk *implements.AwsSdkImplementation) error {
 
-	err := utils.CrobImage(fileId, extension, 1000, 200)
+	err := utils.CompressBanner(fileId, extension)
 
 	if err != nil {
 		return err
 	}
 
 	erro := awsSdk.Upload(implements.UploadToS3{
-		FileDir:     fmt.Sprintf("./tmp/%s/crop_%d_%d.%s", fileId, 1000, 200, extension),
+		FileDir:     fmt.Sprintf("./tmp/%s/compressed.%s", fileId, extension),
 		ContentType: fmt.Sprintf("image/%s", extension),
 		Bucket:      os.Getenv("AWS_BUCKET_PUBLIC"),
 		FileKey:     fileId,

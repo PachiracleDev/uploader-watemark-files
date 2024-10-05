@@ -39,8 +39,6 @@ func GetFile(c *fiber.Ctx,
 
 	//VERIFY SIZE
 
-	fmt.Println(file.Size, "file.Size")
-
 	if file.Size > limitSize {
 		return ResponseFile{
 			Error: fmt.Errorf("file too large"),

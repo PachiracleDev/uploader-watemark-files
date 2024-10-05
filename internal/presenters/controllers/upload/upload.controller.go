@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"os"
 	"uploader/config"
 	"uploader/internal/app/usecases"
@@ -81,6 +82,7 @@ func UploadController(
 		go os.RemoveAll(result.Dir)
 
 		if err != nil {
+			fmt.Println(err, "err")
 			return c.Status(fiber.StatusBadRequest).JSON(
 				map[string]interface{}{
 					"message": "El ancho como minimo debe ser de 1000px y el alto de 200px",

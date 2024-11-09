@@ -111,7 +111,7 @@ func UploadController(
 		result := utils.GetFile(
 			c,
 			constants.LIMIT_POST_SIZE,
-			[]string{"jpeg", "jpg", "png", "mp4", "heic"},
+			[]string{"jpeg", "jpg", "png", "mp4"},
 		)
 
 		if result.Error != nil {
@@ -156,7 +156,7 @@ func UploadController(
 		result := utils.GetFile(
 			c,
 			constants.LIMIT_POST_SIZE,
-			[]string{"jpeg", "jpg", "png", "mp4", "heic"},
+			[]string{"jpeg", "jpg", "png", "mp4"},
 		)
 
 		if result.Error != nil {

@@ -62,7 +62,7 @@ func UploadCollectionFileUsecase(dto dtos.UploadCollectionFile, fileUUID string,
 
 	// MANDAR REQUEST A API PARA ACTUALIZAR LA COLECCION
 	utils.SendRequestHTTP(
-		"http://localhost:9001/collections/insert-multimedia",
+		"http://localhost:9012/collections/insert-multimedia",
 		"POST",
 		map[string]string{
 			"Content-Type": "application/json",

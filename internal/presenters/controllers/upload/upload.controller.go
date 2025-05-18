@@ -60,6 +60,28 @@ func UploadController(
 
 	})
 
+	api.Get("/random-avatar", func(c *fiber.Ctx) error {
+
+		//USECASE
+		fileId, error := usecases.UploadRandomAvatar(awsSdk)
+
+		if error != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(
+				map[string]interface{}{
+					"message": error.Error(),
+				})
+		}
+
+		dir := fmt.Sprintf("./tmp/%s", fileId)
+		//ELIMINAR CARPETA
+		go os.RemoveAll(dir)
+
+		return c.JSON(map[string]interface{}{
+			"fileKey": fileId,
+		})
+
+	})
+
 	api.Post("/banner", func(c *fiber.Ctx) error {
 
 		result := utils.GetFile(
